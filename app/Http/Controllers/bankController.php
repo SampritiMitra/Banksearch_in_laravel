@@ -1,13 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\bankdetail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-
-
 class bankController extends Controller
 {
     /**
@@ -20,7 +16,6 @@ class bankController extends Controller
         //
         return view('searchOrAdd');
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -31,7 +26,6 @@ class bankController extends Controller
         //
         return view('bankForm');
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -43,16 +37,16 @@ class bankController extends Controller
         //
         request()->validate([
                 'ifsc'=>['required','size:11','alpha_num'],
-                'branch'=>['required','string'],
-                'district'=>['required','string'],
-                'state'=>['required','string'],
+                'branch'=>['required'],
+                'district'=>['required'],
+                'state'=>['required'],
                 'phone'=>['required','size:10'],
-                'name'=>['required','string']
+                'name'=>['required']
             ]
             );
         $ifsc=str::upper($request['ifsc']);
         $bank=DB::table('bankdetails')->where('ifsc', $ifsc)->get();
-        if($bank!==null){
+        if(!$bank->isEmpty()){
             echo "IFSC already exists.";
         }
         else{
@@ -67,7 +61,6 @@ class bankController extends Controller
             return redirect('/');
         }
     }
-
     /**
      * Display the specified resource.
      *
@@ -81,17 +74,14 @@ class bankController extends Controller
         $bank=DB::table('bankdetails')->where('ifsc', $ifsc)->get();
         return view('search',compact('bank'));
     }
-
-
     public function search()
     {
         //
         $bankname=DB::table('bankdetails')->distinct()->get('name');
         return view('search',compact('bankname'));
     }
-
     public function fetch(Request $request){
-
+        //for text boxes
         if(!$request['ifsc']==""){
             request()->validate([
                 'ifsc'=>['required','size:11']
@@ -102,7 +92,6 @@ class bankController extends Controller
             $bank=DB::table('bankdetails')->where('ifsc', $ifsc)->get();
             return view('search',compact('bank','bankname'));
         }
-
         if(!$request['bname']==""){
             request()->validate([
                 'bname'=>['required']
@@ -111,38 +100,30 @@ class bankController extends Controller
             $bname=str::upper(request('bname'));
             $bankname=DB::table('bankdetails')->distinct()->get('name');
             $bank_match=DB::table('bankdetails')->where('branch', 'like', '%'. $bname.'%')->orWhere('name', 'like', '%'. $bname.'%')->orWhere('state', 'like', '%'. $bname.'%')->orWhere('ifsc', 'like', '%'. $bname.'%')->orWhere('district', 'like', '%'. $bname.'%')->get();
-      //  $bankname=DB::table('bankdetails')->get('name');
             return view('search',compact('bankname','bank_match'));
         }
-
+        //for drop downs selection
         $bank_name=$request['name'];
-        echo $bank_name;
         if($request['state']==""){
             $state_list=DB::table('bankdetails')->where('name',$bank_name)->distinct()->get('state');
             return view('search',compact('bank_name','state_list'));
         }
-
         $state_name=$request['state'];
-        echo $state_name;
         if($request['district']==""){
             $district_list=DB::table('bankdetails')->where('name',$bank_name)->distinct()->where('state',$state_name)->get('district');
             return view('search',compact('bank_name','state_name','district_list'));
         }
-
         $district_name=$request['district'];
-        echo $district_name;
         if($request['branch']==""){
-            echo "district has submitted";
             $branch_list=DB::table('bankdetails')->where('name',$bank_name)->distinct()->where('state',$state_name)->where('district',$district_name)->get('branch');
-            //returns error if only state or district with spaces is found
+            //returns error if only state or district with spaces is found 
+            //error removed when using "" in value for select options
             return view('search',compact('bank_name','state_name','district_name','branch_list'));
         }
         $branch_name=$request['branch'];
-        echo $branch_name;
         $all_details=DB::table('bankdetails')->where('name',$bank_name)->distinct()->where('state',$state_name)->where('district',$district_name)->where('branch',$branch_name)->get();
         return view('search',compact('all_details'));
     }
-
     
     /**
      * Show the form for editing the specified resource.
@@ -154,7 +135,6 @@ class bankController extends Controller
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -166,7 +146,6 @@ class bankController extends Controller
     {
         //
     }
-
     /**
      * Remove the specified resource from storage.
      *
@@ -180,5 +159,4 @@ class bankController extends Controller
     // @if(!array_key_exists('district_name', $arr))
     //  <option value="">Select District</option>
     //  @endif
-
 }

@@ -108,7 +108,7 @@ $arr = get_defined_vars();
      @endif
 
     @if(array_key_exists('bank_name', $arr))
-     <option value={{$bank_name}}>{{$bank_name}}</option>
+     <option value="{{$bank_name}}">{{$bank_name}}</option>
     @endif
     </select>
    </div>
@@ -129,7 +129,7 @@ $arr = get_defined_vars();
      @if(array_key_exists('state_name', $arr))
      <div class="form-group">
     <select name="state" id="state" class="form-control input-lg dynamic">
-     <option value={{$state_name}}><pre>{{$state_name}}</pre></option>
+     <option value="{{$state_name}}">{{$state_name}}</option>
     </select>
    </div>
    <br />
@@ -152,7 +152,7 @@ $arr = get_defined_vars();
     <div class="form-group">
     <select name="district" id="district" class="form-control input-lg dynamic">
     
-     <option value={{$district_name}}>{{$district_name}}</option>
+     <option value="{{$district_name}}">{{$district_name}}</option>
 
     </select>
    </div>
@@ -164,15 +164,11 @@ $arr = get_defined_vars();
     <select name="branch" id="branch" class="form-control input-lg dynamic" onchange="this.form.submit()">
       <option value="">Select Branch</option>
       @foreach($branch_list as $bn)
-     <option value={{ $bn->branch}}>{{ $bn->branch }}</option>
+     <option value="{{ $bn->branch}}">{{ $bn->branch }}</option>
      @endforeach
     </select>
     </div>
     @endif
-
-    <div class="form-group">
-    <button type="submit" name="sbmt">Submit</button>
-   </div>
 
    {{ csrf_field() }}
    <br />
